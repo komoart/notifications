@@ -3,7 +3,7 @@ import websockets
 
 uri = "ws://localhost:8765"
 
-async def spammer(users_name: list) -> None:
+async def spamer(users_name: list) -> None:
     # Используйте менеджер контекста, чтобы соединение автоматически закрылось при выходе из блока
     async with websockets.connect(uri) as websocket:
         await websocket.recv()
@@ -17,4 +17,4 @@ async def spammer(users_name: list) -> None:
                 await asyncio.sleep(10)
 
 loop = asyncio.get_event_loop()
-loop.run_until_complete(spammer(['Алексей'])) 
+loop.run_until_complete(spamer(['Алексей'])) 
