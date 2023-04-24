@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  rabbit_mq:
+    build:
+      context: .
+      dockerfile: infra/rabbitmq/Dockerfile
+    container_name: rabbit_mq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+
+  postgres_notifications:
+    container_name: postgres_notifications
+    image: postgres:13-alpine
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+
+  user_api:
+    container_name: user_api
+    build:
+      context: .
+      dockerfile: infra/users/Dockerfile
+    depends_on:
+      - rabbit_mq
+      - postgres
+
+  admin_api:
+    container_name: admin_api
+    build:
+      context: .
+      dockerfile: infra/admin/Dockerfile
+    depends_on:
+      - rabbit_mq
+
+  consumer:
+    container_name: consumer
+    build:
+      context: .
+      dockerfile: infra/worker/Dockerfile
+    depends_on:
+      - rabbit_mq
