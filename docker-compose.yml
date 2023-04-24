@@ -3,7 +3,8 @@ version: '3.8'
 services:
   rabbit_mq:
     build:
-      context: rabbitmq
+      context: .
+      dockerfile: infra/rabbitmq/Dockerfile
     container_name: rabbit_mq
     ports:
       - "5672:5672"
@@ -23,7 +24,7 @@ services:
 
   postgres_notifications:
     container_name: postgres_notifications
-    image: postgres:13
+    image: postgres:13-alpine
     restart: always
     env_file:
       - .env
@@ -33,8 +34,8 @@ services:
   user_api:
     container_name: user_api
     build:
-      context: notifications_api
-      dockerfile: Dockerfile_user
+      context: .
+      dockerfile: infra/users/Dockerfile
     depends_on:
       - rabbit_mq
       - postgres
@@ -42,14 +43,15 @@ services:
   admin_api:
     container_name: admin_api
     build:
-      context: notifications_api
-      dockerfile: Dockerfile_admin
+      context: .
+      dockerfile: infra/admin/Dockerfile
     depends_on:
       - rabbit_mq
 
   consumer:
     container_name: consumer
     build:
-      context: notifications_api/worker
+      context: .
+      dockerfile: infra/worker/Dockerfile
     depends_on:
       - rabbit_mq

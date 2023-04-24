@@ -1,0 +1,22 @@
+@startuml
+== Notification Service ==
+activate AdminPanel
+activate Postgres
+activate Worker
+activate RabbitMQ
+activate NotificationAPI
+activate Scheduler
+
+
+AdminPanel -> Postgres: События для рассылки
+Postgres -> AdminPanel: Статус рассылки
+
+Scheduler -> Postgres: Выборка данных для рассылок
+Scheduler -> NotificationAPI: Получение запросов
+
+NotificationAPI -> RabbitMQ: Установка запросов в очередь
+
+RabbitMQ -> Worker: Запуск рассылок
+Worker -> Postgres: Обновление статуса рассылок
+Worker -> Worker: Отслеживание статуса рассылок
+@enduml
