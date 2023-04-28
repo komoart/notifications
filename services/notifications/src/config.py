@@ -7,7 +7,7 @@ class Settings(BaseSettings):
 
     rabbit_username: str = 'rabbit'
     rabbit_password: str = 'rabbit'
-    rabbit_host: str = 'rabbit_mq'
+    rabbit_host: str = 'rabbitmq'
 
     rabbit_exchange: str = 'email'
     rabbit_exchange_type: str = 'direct'

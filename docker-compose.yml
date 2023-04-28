@@ -1,57 +1,102 @@
 version: '3.8'
 
 services:
-  rabbit_mq:
+  rabbitmq:
     build:
       context: .
       dockerfile: infra/rabbitmq/Dockerfile
-    container_name: rabbit_mq
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    env_file:
+      - infra/.env
     healthcheck:
       test: [ "CMD", "nc", "-z", "localhost", "5672" ]
       interval: 5s
       timeout: 15s
       retries: 1
 
-  postgres_notifications:
+  postgres:
     container_name: postgres_notifications
-    image: postgres:13-alpine
+    image: postgres:13.0-alpine
     restart: always
+    expose:
+      - "5432"
     env_file:
-      - .env
+      - infra/.env
     volumes:
-      - ./postgresql/data:/var/lib/postgresql/data
-
-  user_api:
-    container_name: user_api
-    build:
-      context: .
-      dockerfile: infra/users/Dockerfile
-    depends_on:
-      - rabbit_mq
-      - postgres
+      - postgres_notification_data:/var/lib/postgresql/data
 
   admin_api:
-    container_name: admin_api
+    container_name: notification_admin
     build:
       context: .
       dockerfile: infra/admin/Dockerfile
-    depends_on:
-      - rabbit_mq
+    env_file:
+      - infra/.env
+    volumes:
+      - nginx_static:/app/static
+      - nginx_media:/app/media
 
-  consumer:
-    container_name: consumer
+  user_api:
+    container_name: user_service
+    build:
+      context: .
+      dockerfile: infra/users/Dockerfile
+    ports:
+      - "8002:8002"
+
+  api:
+    container_name: notification_api
+    build:
+      context: .
+      dockerfile: infra/api/Dockerfile
+    ports:
+      - "8001:8000"
+
+  worker:
+    container_name: worker
     build:
       context: .
       dockerfile: infra/worker/Dockerfile
+    restart:
+      always
+    env_file:
+      - infra/.env
     depends_on:
-      - rabbit_mq
+      - user_api
+      - postgres
+
+  scheduler:
+    container_name: scheduler
+    build:
+      context: .
+      dockerfile: infra/scheduler/Dockerfile
+    restart:
+      always
+    env_file:
+      - infra/.env
+    depends_on:
+      - user_api
+      - postgres
+      - api
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./infra/nginx/conf.d:/etc/nginx/conf.d
+      - nginx_static:/usr/share/nginx/www/static
+      - nginx_media:/usr/share/nginx/www/media
+
+volumes:
+  postgres_notification_data:
+  nginx_static:
+  nginx_media:
