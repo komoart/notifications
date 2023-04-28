@@ -16,7 +16,7 @@ async def welcome(websoket: websockets.WebSocketServerProtocol) -> str:
 
 
 async def receiver(websoket: websockets.WebSocketServerProtocol, path: str) -> None:
-    name  = await welcome(websoket)
+    name = await welcome(websoket)
     try:
         while True:
             message = (await websoket.recv()).strip()
@@ -41,4 +41,4 @@ ws_server = websockets.serve(receiver, 'localhost', 8765)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(ws_server)
-loop.run_forever() 
+loop.run_forever()
