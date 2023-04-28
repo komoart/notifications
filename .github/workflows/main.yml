@@ -39,21 +39,20 @@ jobs:
           name: reports
           path: report_*/
 
-#  Нет возможности добавить ключи в secrets
-#  send_message:
-#    runs-on: ubuntu-latest
-#    if: always()
-#    needs: build
-#    steps:
-#      - name: send message
-#        uses: appleboy/telegram-action@master
-#        with:
-#          to: ${{ secrets.TELEGRAM_TO }}
-#          token: ${{ secrets.TELEGRAM_TOKEN }}
-#          format: html
-#          message: |
-#            <b>${{ github.workflow }}</b> Notification deploy report
-#            <b>repo</b>: <a href="https://github.com/${{github.repository}}">${{github.repository}}</a>
-#            <b>event</b>: ${{ github.event_name }}
-#            <b>status</b>: ${{ needs.build.result }}
-#            <b>details</b>: <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}">click</a>
+  send_message:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: build
+    steps:
+      - name: send message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>${{ github.workflow }}</b> Notification deploy report
+            <b>repo</b>: <a href="https://github.com/${{github.repository}}">${{github.repository}}</a>
+            <b>event</b>: ${{ github.event_name }}
+            <b>status</b>: ${{ needs.build.result }}
+            <b>details</b>: <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}">click</a>
