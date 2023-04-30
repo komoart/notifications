@@ -7,7 +7,7 @@ from psycopg2 import sql
 from psycopg2.extras import DictCursor
 
 
-class Postgres():
+class Postgres:
     @backoff.on_exception(backoff.expo, psycopg2.OperationalError, max_time=config.POSTGRES_BACKOFF_MAX_TIME)
     def exec(self, template: sql.SQL, args: Dict[str, Any]) -> Optional[Dict]:
         """Выполнить запрос в базу и вернуть результат, если возможно."""
