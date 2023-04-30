@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     # Название проекта. Используется в Swagger-документации
     PROJECT_NAME: str = os.getenv('PROJECT_NAME', 'Тестовый сервис пользовательских данных')
     PROJECT_DESCRIPTION: str = os.getenv('PROJECT_DESCRIPTION',
-                                'Тестовый сервис предоставляет информацию о пользователях')
+                                         'Тестовый сервис предоставляет информацию о пользователях')
     API_VERSION: str = '1.0.0'
 
     # Корень проекта
