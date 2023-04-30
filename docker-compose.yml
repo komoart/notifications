@@ -95,6 +95,11 @@ services:
       - ./infra/nginx/conf.d:/etc/nginx/conf.d
       - nginx_static:/usr/share/nginx/www/static
       - nginx_media:/usr/share/nginx/www/media
+      
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'
 
 volumes:
   postgres_notification_data:
