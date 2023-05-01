@@ -2,15 +2,17 @@ import logging
 
 import uvicorn as uvicorn
 from api.v1 import user
-from core.config import config
+
+from core.config import settings
+
 from core.logger import LOGGING
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
 app = FastAPI(
-    title=config.PROJECT_NAME,
-    description=config.PROJECT_DESCRIPTION,
-    version=config.API_VERSION,
+    title=settings.PROJECT_NAME,
+    description=settings.PROJECT_DESCRIPTION,
+    version=settings.API_VERSION,
     docs_url='/api/v1/openapi',
     openapi_url='/api/v1/openapi.json',
     default_response_class=ORJSONResponse,

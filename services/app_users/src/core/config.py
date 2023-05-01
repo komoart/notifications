@@ -1,7 +1,8 @@
 import os
 from logging import config as logging_config
 
-from pydantic import BaseSettings
+
+from pydantic import BaseConfig, Field
 
 from core.logger import LOGGING
 
@@ -9,18 +10,21 @@ from core.logger import LOGGING
 logging_config.dictConfig(LOGGING)
 
 
-class Settings(BaseSettings):
+
+class Settings(BaseConfig):
     # Название проекта. Используется в Swagger-документации
-    PROJECT_NAME: str = os.getenv('PROJECT_NAME', 'Тестовый сервис пользовательских данных')
-    PROJECT_DESCRIPTION: str = os.getenv('PROJECT_DESCRIPTION',
-                                         'Тестовый сервис предоставляет информацию о пользователях')
-    API_VERSION: str = '1.0.0'
+    PROJECT_NAME: str = Field(..., env='PROJECT_NAME', description='Тестовый сервис пользовательских данных')
+    PROJECT_DESCRIPTION: str = Field(..., env='PROJECT_DESCRIPTION',
+                                    description='Тестовый сервис предоставляет информацию о пользователях')
+    API_VERSION: str = Field('1.0.0')
+
 
     # Корень проекта
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # Адрес API, принимающего события для отправки уведомлений
-    NOTIFICATION_API_REGISTRATION_EVENT_URL: str = os.getenv('NOTIFICATION_API_REGISTRATION_EVENT_URL')
+
+    NOTIFICATION_API_REGISTRATION_EVENT_URL: str = Field(..., env='NOTIFICATION_API_REGISTRATION_EVENT_URL')
 
 
-config = Settings()
+settings = Settings()
