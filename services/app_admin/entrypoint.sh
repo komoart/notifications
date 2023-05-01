@@ -9,7 +9,7 @@ done
 
 python3 manage.py migrate
 python3 manage.py collectstatic --no-input
-python3 manage.py shell -c "from django.contrib.auth.models import User; User.objects.filter(username='notification_admin').exists() or User.objects.create_superuser('notification_admin', 'notification_admin@admin.local', '^Z0t&Upo&8&8')"
 python3 manage.py loaddata fixtures/admin_panel_data.json
+python3 manage.py create_superuser
 
 gunicorn -c gunicorn.conf.py config.wsgi:application

@@ -26,7 +26,7 @@ class Scheduler:
     @staticmethod
     def _chunker(event: Event) -> Generator[Event, None, None]:
         """Разбивает событие на несколько чанков с ограниченным количеством user_ids в каждом чанке."""
-        for users_chunk in create_chunks(event.user_ids, config.PUBLISHER_CHUNK_SIZE):
+        for users_chunk in create_chunks(event.user_ids, config.publisher_chunk_size):
             new_event = copy.deepcopy(event)
             new_event.user_ids = users_chunk
             yield new_event
@@ -89,7 +89,7 @@ class Scheduler:
                            order by scheduled_datetime
                            limit %(batch_size)s;""")
 
-        items = self.postgres.exec(query, {'batch_size': config.SELECT_BATCH_SIZE})
+        items = self.postgres.exec(query, {'batch_size': config.select_batch_size})
         return self._build_events(items)
 
     def work(self):
@@ -123,7 +123,7 @@ def main():
     while True:
         logger.debug('Do work')
         scheduler.work()
-        time.sleep(config.SCHEDULER_SLEEP_TIME)
+        time.sleep(config.scheduler_sleep_time)
 
 
 if __name__ == '__main__':
