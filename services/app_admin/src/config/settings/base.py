@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'admin_panel',
+    'django_quill',
 ]
 
 MIDDLEWARE = [

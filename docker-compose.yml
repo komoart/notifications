@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: infra/rabbitmq/Dockerfile
     container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+    expose:
+      - "5672"
+      - "15672"
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
@@ -47,16 +47,16 @@ services:
     build:
       context: .
       dockerfile: infra/users/Dockerfile
-    ports:
-      - "8002:8002"
+    expose:
+      - "8002"
 
   api:
     container_name: notification_api
     build:
       context: .
       dockerfile: infra/api/Dockerfile
-    ports:
-      - "8001:8000"
+    expose:
+      - "8001"
 
   worker:
     container_name: worker

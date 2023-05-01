@@ -8,7 +8,7 @@ class NotFoundException(Exception):
     """Context collector not found."""
 
 
-class ContextCollectorFactory():
+class ContextCollectorFactory:
     def __init__(self, user_service_client: UserServiceClientAbstract):
         self.user_service_client = user_service_client
 
