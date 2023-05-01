@@ -57,8 +57,8 @@ services:
       dockerfile: infra/websocket_srv/Dockerfile
     env_file:
       - infra/.env
-    ports:
-      - "8003:8000"
+    expose:
+      - "8003"
 
   api:
     container_name: notification_api
