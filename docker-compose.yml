@@ -49,6 +49,16 @@ services:
       dockerfile: infra/users/Dockerfile
     ports:
       - "8002:8002"
+  
+  websocet_api:
+    container_name: websocet_api
+    build:
+      context: .
+      dockerfile: infra/websocket_srv/Dockerfile
+    env_file:
+      - infra/.env
+    ports:
+      - "8003:8000"
 
   api:
     container_name: notification_api
