@@ -2,7 +2,9 @@ import logging
 
 import uvicorn as uvicorn
 from api.v1 import user
+
 from core.config import settings
+
 from core.logger import LOGGING
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse

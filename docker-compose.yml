@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: infra/rabbitmq/Dockerfile
     container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+    expose:
+      - "5672"
+      - "15672"
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
@@ -47,8 +47,8 @@ services:
     build:
       context: .
       dockerfile: infra/users/Dockerfile
-    ports:
-      - "8002:8002"
+    expose:
+      - "8002"
   
   websocet_api:
     container_name: websocet_api
@@ -65,8 +65,8 @@ services:
     build:
       context: .
       dockerfile: infra/api/Dockerfile
-    ports:
-      - "8001:8000"
+    expose:
+      - "8001"
 
   worker:
     container_name: worker
@@ -105,6 +105,11 @@ services:
       - ./infra/nginx/conf.d:/etc/nginx/conf.d
       - nginx_static:/usr/share/nginx/www/static
       - nginx_media:/usr/share/nginx/www/media
+      
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'
 
 volumes:
   postgres_notification_data:

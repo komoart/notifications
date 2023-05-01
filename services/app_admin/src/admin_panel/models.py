@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import JSONField
 from django.utils import timezone
+from django_quill.fields import QuillField
 
 
 class TemplateCodes(models.TextChoices):
@@ -20,7 +21,7 @@ class Template(models.Model):
 
     title = models.CharField('Наименование', max_length=250)
     code = models.CharField(choices=TemplateCodes.choices, max_length=50)
-    template = models.TextField()
+    template = QuillField()
     subject = models.TextField(blank=True, null=True)
     transport = models.CharField(choices=Transport.choices, max_length=50, default=Transport.email)
 
