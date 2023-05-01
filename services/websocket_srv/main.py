@@ -12,16 +12,20 @@ from config import settings
 
 app = FastAPI()
 
+
 class User(BaseModel):
     username: str
     password: str
 
+
 class Settings(BaseModel):
     authjwt_secret_key: str = settings.authjwt_secret_key
+
 
 @AuthJWT.load_config
 def get_config():
     return Settings()
+
 
 @app.exception_handler(AuthJWTException)
 def authjwt_exception_handler(request: Request, exc: AuthJWTException):
@@ -61,15 +65,17 @@ html = """
 </html>
 """
 
+
 @app.get("/")
 async def get():
     return HTMLResponse(html)
+
 
 @app.websocket('/ws')
 async def websocket(websocket: WebSocket, token: str = Query(...), Authorize: AuthJWT = Depends()):
     await websocket.accept()
     try:
-        Authorize.jwt_required("websocket",token=token)
+        Authorize.jwt_required("websocket", token=token)
         await websocket.send_text("Successfully Login!")
         while True:
             message = await websocket.receive()
@@ -87,13 +93,14 @@ async def websocket(websocket: WebSocket, token: str = Query(...), Authorize: Au
     finally:
         await session.close()
 
+
 @app.post('/login')
 def login(user: User, Authorize: AuthJWT = Depends()):
-    #идет проверка через auth_jwt микросервис, возвращает токен
+    # идет проверка через auth_jwt микросервис, возвращает токен
     if user.username != "test" or user.password != "test":
-        raise HTTPException(status_code=401,detail="Bad username or password")
+        raise HTTPException(status_code=401, detail="Bad username or password")
 
-    access_token = Authorize.create_access_token(subject=user.username,fresh=True)
+    access_token = Authorize.create_access_token(subject=user.username, fresh=True)
     refresh_token = Authorize.create_refresh_token(subject=user.username)
     return {"access_token": access_token, "refresh_token": refresh_token}
 
